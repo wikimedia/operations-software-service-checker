@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/default.mk
+
+export DH_VERBOSE = 1
+
+#export PYBUILD_NAME=service-checker
+
+export PYBUILD_INSTALL_ARGS_python3 = --install-scripts=/dev/null
+
+
+%:
+	dh $@  --with python2,python3 --buildsystem=pybuild

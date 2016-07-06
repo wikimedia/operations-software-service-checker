@@ -1,0 +1,5 @@
+service-checker (0.0.1) unstable; urgency=medium
+
+  * Initial release
+
+ -- Giuseppe Lavagetto <glavagetto@wikimedia.org>  Tue, 05 Jul 2016 17:51:24 +0200

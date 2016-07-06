@@ -1,5 +1,4 @@
-import checker
-from checker import service
+from servicechecker import swagger
 import unittest
 import mock
 import json
@@ -12,7 +11,7 @@ class TestTemplateUrl(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.t = service.TemplateUrl(
+        cls.t = swagger.TemplateUrl(
             'https://example.org/test/{where}{/what}{/+why}')
 
     def test_init(self):
@@ -55,7 +54,7 @@ class TestEndpointRequest(unittest.TestCase):
         def getheader(key):
             return d['headers'].get(key, None)
         r.getheader = mock.MagicMock(side_effect=getheader)
-        service.fetch_url = mock.MagicMock(return_value=r)
+        swagger.fetch_url = mock.MagicMock(return_value=r)
 
     def setUp(self):
         self.resp = {
@@ -77,7 +76,7 @@ class TestEndpointRequest(unittest.TestCase):
             'status': 200
         }
 
-        self.ep = service.EndpointRequest(
+        self.ep = swagger.EndpointRequest(
             "a Test endpoint",
             "http://127.0.0.1/baseurl",
             "get",
@@ -174,7 +173,7 @@ class TestEndpointRequest(unittest.TestCase):
         """
         Test a simple endpoint
         """
-        ep = service.EndpointRequest(
+        ep = swagger.EndpointRequest(
             "simple test",
             "http://127.0.0.1:7321",
             "get",
@@ -208,10 +207,10 @@ class TestCheckService(unittest.TestCase):
         return self.routes.get(r, None)
 
     def mock_routes(self):
-        service.fetch_url = mock.MagicMock(side_effect=self.router)
+        swagger.fetch_url = mock.MagicMock(side_effect=self.router)
 
     def setUp(self):
-        self.cs = service.CheckService('127.0.0.1', 'http://example.org/api')
+        self.cs = swagger.CheckService('127.0.0.1', 'http://example.org/api')
         fn = os.path.join(os.path.dirname(__file__), '../fixtures/test.json')
         with open(fn, 'rb') as f:
             data = f.read().decode('utf-8')

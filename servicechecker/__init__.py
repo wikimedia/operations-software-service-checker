@@ -66,7 +66,7 @@ def fetch_url(client, url, **kw):
             # remove trusty (aka urllib3 1.7.1) support
             urllib3.exceptions.ReadTimeoutError):
         raise CheckError("Timeout on connection while "
-                                "downloading {}".format(url))
+                         "downloading {}".format(url))
     except Exception as e:
         raise CheckError("Generic connection error: {}".format(e))
 

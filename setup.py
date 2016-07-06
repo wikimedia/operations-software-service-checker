@@ -16,7 +16,7 @@ test_requires = [
 ]
 
 setup(
-    name='service-checker',
+    name='servicechecker',
     version=version,
     description="An automatic monitoring tool for swagger-based webservices",
     long_description=README,
@@ -31,7 +31,7 @@ setup(
     test_suite='nose.collector',
     entry_points={
         'console_scripts': [
-            'service-checker = checker.service:main'
+            'service-checker-swagger = servicechecker.swagger:main'
         ]
     },
 )

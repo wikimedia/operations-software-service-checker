@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from checker import CheckerBase, fetch_url, CheckError
+from servicechecker import CheckerBase, fetch_url, CheckError
 
 import argparse
 from collections import namedtuple

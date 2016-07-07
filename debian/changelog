@@ -1,3 +1,9 @@
+service-checker (0.0.1~precise0) precise-wikimedia; urgency=medium
+
+  * Release for precise
+
+ -- Giuseppe Lavagetto <glavagetto@wikimedia.org>  Thu, 07 Jul 2016 14:54:47 +0200
+
 service-checker (0.0.1) unstable; urgency=medium
 
   * Initial release

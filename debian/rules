@@ -6,8 +6,5 @@ export DH_VERBOSE = 1
 
 #export PYBUILD_NAME=service-checker
 
-export PYBUILD_INSTALL_ARGS_python3 = --install-scripts=/dev/null
-
-
 %:
-	dh $@  --with python2,python3 --buildsystem=pybuild
+	dh $@  --with python2 --buildsystem=python_distutils

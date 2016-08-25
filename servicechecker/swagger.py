@@ -4,6 +4,7 @@ from servicechecker import CheckerBase, fetch_url, CheckError
 import argparse
 from collections import namedtuple
 import json
+import yaml
 import re
 import sys
 
@@ -86,7 +87,11 @@ class CheckService(CheckerBase):
         try:
             r = json.loads(resp)
         except ValueError:
-            raise ValueError("No valid spec found")
+            # try to load as YAML
+            try:
+                r = yaml.safe_load(resp)
+            except yaml.YAMLError:
+                raise ValueError("No valid spec found")
 
         TemplateUrl.default = r.get('x-default-params', {})
         base_path = r.get('basePath', '')

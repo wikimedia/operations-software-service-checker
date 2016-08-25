@@ -8,6 +8,7 @@ version = '0.0.1'
 
 install_requires = [
     'urllib3>=1.7',
+    'PyYAML>=3.11'
 ]
 
 test_requires = [

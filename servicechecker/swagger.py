@@ -16,7 +16,7 @@ except ImportError:
     from urllib.parse import quote_plus
 
 try:
-    reload(sys)
+    reload(sys)  # noqa
     sys.setdefaultencoding('utf-8')
 except:
     pass

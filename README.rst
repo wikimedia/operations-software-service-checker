@@ -22,7 +22,8 @@ From Source
 Usage
 -----
 
-Once installed, you will have the ``service-checker`` binary in your path.
+Once installed, you will have the ``service-checker-swagger`` binary
+in your path.
 
 Suppose you have a webservice running on localhost port 8080, which
 reponds for HTTP host ``awesomeservice.local`` and it
@@ -31,19 +32,19 @@ as designed according to its spec you can just do
 
 .. code:: bash
 
-    $ service-checker 127.0.0.1 awesomeservice.local:8080 -s /swagger
+    $ service-checker-swagger 127.0.0.1 awesomeservice.local:8080 -s /swagger
     All endpoints are healthy
 
 
 Spec format support
 -------------------
 
-``service-checker`` checks each of the paths in your swagger/OpenAPI
+``service-checker-swagger`` checks each of the paths in your swagger/OpenAPI
 specification for an ``x-amples`` section and uses it to do live requests
 to the API and checks that the response corresponds to the base. The
 ``x-amples`` section is an extension to the swagger spec that has been
 introduced by `swagger-test <https://github.com/earldouglas/swagger-test>`_
-and that consists of a ``request`` and a ``response`` sections.
+and that consists of items with ``request`` and ``response`` sections.
 
 Url templating according to RFC 6570 is partially supported via the
 ``params`` section of the ``x-amples`` section.
@@ -60,7 +61,7 @@ Basic example
    "/pets/{id}": {
        "get": {
           "x-monitor": true,
-          "x-amples": {
+          "x-amples": [ {
             "request": {
               "params": {"id": 10},
               "headers": { "Accept": "application/json", },

@@ -1,5 +1,5 @@
 {
-  "basepath": "/api",
+  "basePath": "/api",
   "x-default-params": {"who": "joe"},
   "paths": {
     "/simple": { "get": {} },

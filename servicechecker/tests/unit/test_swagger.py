@@ -210,7 +210,7 @@ class TestCheckService(unittest.TestCase):
         swagger.fetch_url = mock.MagicMock(side_effect=self.router)
 
     def setUp(self):
-        self.cs = swagger.CheckService('127.0.0.1', 'http://example.org/api')
+        self.cs = swagger.CheckService('127.0.0.1', 'http://example.org')
         fn = os.path.join(os.path.dirname(__file__), '../fixtures/test.json')
         with open(fn, 'rb') as f:
             data = f.read().decode('utf-8')
@@ -225,7 +225,7 @@ class TestCheckService(unittest.TestCase):
         self.assertEquals(self.cs._timeout, 5)
         self.assertEquals(self.cs.port, '80')
         self.assertEquals(self.cs.http_host, 'example.org')
-        self.assertEquals(self.cs._url, 'http://127.0.0.1:80/api')
+        self.assertEquals(self.cs._url, 'http://127.0.0.1:80')
 
     def test_get_endpoints(self):
         """
@@ -234,7 +234,7 @@ class TestCheckService(unittest.TestCase):
         self.mock_routes()
         l = [el for el, data in self.cs.get_endpoints()]
         l.sort()
-        self.assertListEqual(l, [u'/simple', u'/{who}/{verb}'])
+        self.assertListEqual(l, [u'/api/simple', u'/api/{who}/{verb}'])
 
     def test_get_ep_invalid_spec(self):
         """
@@ -247,15 +247,15 @@ class TestCheckService(unittest.TestCase):
             '/?spec', {'status': 200, 'body': json.loads(data)})
         self.mock_routes()
         l = [el for el, _ in self.cs.get_endpoints()]
-        self.assertEquals(l, [u'/{who}/{verb}'])
+        self.assertEquals(l, [u'/api/{who}/{verb}'])
 
     def test_run(self):
         """
         Test a successful run
         """
-        self.add_mock_response('/simple', {'status': 200, 'body': 'hi'})
+        self.add_mock_response('/api/simple', {'status': 200, 'body': 'hi'})
         self.add_mock_response(
-            '/joe/rulez', {'status': 200, 'body': 'For sure!'})
+            '/api/joe/rulez', {'status': 200, 'body': 'For sure!'})
         self.mock_routes()
         with self.assertRaises(SystemExit) as e:
             self.cs.run()
@@ -276,9 +276,9 @@ class TestCheckService(unittest.TestCase):
         """
         Test a warning exit
         """
-        self.add_mock_response('/simple', {'status': 200, 'body': 'hi'})
+        self.add_mock_response('/api/simple', {'status': 200, 'body': 'hi'})
         self.add_mock_response(
-            '/joe/rulez', {'status': 200, 'body': 'For sure?'})
+            '/api/joe/rulez', {'status': 200, 'body': 'For sure?'})
         self.mock_routes()
         with self.assertRaises(SystemExit) as e:
             self.cs.run()

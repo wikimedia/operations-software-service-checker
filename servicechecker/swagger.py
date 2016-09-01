@@ -89,9 +89,11 @@ class CheckService(CheckerBase):
             raise ValueError("No valid spec found")
 
         TemplateUrl.default = r.get('x-default-params', {})
+        base_path = r.get('basePath', '')
         for endpoint, data in r['paths'].items():
             if not endpoint:
                 continue
+            endpoint = base_path + endpoint
             for key in self._supported_methods:
                 try:
                     d = data[key]

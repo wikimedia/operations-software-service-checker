@@ -93,7 +93,10 @@ class CheckService(CheckerBase):
             except yaml.YAMLError:
                 raise ValueError("No valid spec found")
 
+        # default params for URL interpolation
         TemplateUrl.default = r.get('x-default-params', {})
+        # default query parameters for requests
+        default_query = r.get('x-default-query', {})
         base_path = r.get('basePath', '')
         for endpoint, data in r['paths'].items():
             if not endpoint:
@@ -116,6 +119,11 @@ class CheckService(CheckerBase):
                     examples = d.get('x-amples', default_example)
                     for x in examples:
                         x['http_method'] = key
+                        # Merge query parameters with defaults
+                        # In Py 3.5 we could do {**default_query, **query}
+                        query = default_query.copy()
+                        query.update(x['request'].get('query', {}))
+                        x['request']['query'] = query
                         yield endpoint, x
                 except KeyError:
                     # No data for this method

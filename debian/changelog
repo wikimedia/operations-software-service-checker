@@ -1,3 +1,11 @@
+service-checker (0.0.2) jessie-wikimedia; urgency=medium
+
+  * Add support for x-default-query
+  * Can now be used for checking MediaWiki
+  * Supports yaml specs
+
+ -- Giuseppe Lavagetto <glavagetto@wikimedia.org>  Fri, 28 Oct 2016 12:25:24 +0200
+
 service-checker (0.0.1) unstable; urgency=medium
 
   * Initial release

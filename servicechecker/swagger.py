@@ -258,7 +258,11 @@ class EndpointRequest(object):
                 except Exception as e:
                     self.status = "CRITICAL"
                     self.msg = ("Test {} responds with malformed "
-                                "body: {}".format(self.title, e))
+                                "body ({}: {}):\n{}".format(
+                                    self.title,
+                                    e.__class__.__name__,
+                                    e.message,
+                                    data))
             else:
                 check = self._verify(self.body)
                 if not check(body):

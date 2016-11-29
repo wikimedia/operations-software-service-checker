@@ -1,3 +1,9 @@
+service-checker (0.0.3) jessie-wikimedia; urgency=medium
+
+  * Improved message on malformed responses
+
+ -- Riccardo Coccioli <rcoccioli@wikimedia.org>  Tue, 29 Nov 2016 12:11:52 +0100
+
 service-checker (0.0.2) jessie-wikimedia; urgency=medium
 
   * Add support for x-default-query

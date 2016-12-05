@@ -5,7 +5,7 @@ Maintainer: Giuseppe Lavagetto <glavagetto@wikimedia.org>
 Build-Depends: debhelper (>=9), dh-python, python-all (>= 2.6.6-3~),
                python-setuptools, python3-all, python3-setuptools,
                python-urllib3, python3-urllib3, python-mock, python3-mock,
-               python3-nose, python-nose
+               python3-nose, python-nose, python-yaml, python3-yaml
 Standards-Version: 3.9.8
 Homepage: https://github.com/wikimedia/operations-software-service-checker
 X-Python-Version: >= 2.7

@@ -25,7 +25,7 @@ try:
 except:
     pass
 
-from servicechecker import CheckerBase, fetch_url, CheckError
+from servicechecker import CheckerBase, fetch_url, CheckError, time_to_statsd
 
 
 class CheckService(CheckerBase):
@@ -233,6 +233,7 @@ class EndpointRequest(object):
         self._request(request)
         self._response(response)
         self.tpl_url = TemplateUrl(base_url + endpoint)
+        self.base_url = base_url
 
     def run(self, client):
         """
@@ -243,14 +244,16 @@ class EndpointRequest(object):
         """
         try:
             url = self.tpl_url.realize(self.url_parameters)
-            r = fetch_url(
-                client,
-                url,
-                headers=self.request_headers,
-                fields=self.query_parameters,
-                redirect=False,
-                method=self.method
-            )
+            label = url.replace(self.base_url, '', 1).replace('/', '_')
+            with time_to_statsd(label):
+                r = fetch_url(
+                    client,
+                    url,
+                    headers=self.request_headers,
+                    fields=self.query_parameters,
+                    redirect=False,
+                    method=self.method
+                )
         except CheckError as e:
             self.status = 'CRITICAL'
             self.msg = "Could not fetch url {}: {}".format(

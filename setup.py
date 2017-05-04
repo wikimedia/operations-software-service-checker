@@ -10,6 +10,7 @@ install_requires = [
     'urllib3>=1.7',
     'PyYAML>=3.11',
     'gevent>=1.1',
+    'statsd>=3.0',
 ]
 
 test_requires = [

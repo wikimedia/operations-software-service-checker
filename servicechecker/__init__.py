@@ -76,6 +76,7 @@ class CheckerBase(object):
     Base class to implement higher-level checkers
     """
     nagios_codes = ['OK', 'WARNING', 'CRITICAL']
+    nrpe_timeout = 10
 
     def _spawn_downloader(self):
         """

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from servicechecker import CheckerBase, fetch_url, CheckError
+# Import gevent.monkey and do the monkey patching
+from gevent import monkey; monkey.patch_all()  # noqa
 
 import argparse
 from collections import namedtuple
@@ -7,6 +8,8 @@ import json
 import yaml
 import re
 import sys
+
+import gevent
 
 # python 2 vs python 3 imports
 try:
@@ -21,6 +24,8 @@ try:
     sys.setdefaultencoding('utf-8')
 except:
     pass
+
+from servicechecker import CheckerBase, fetch_url, CheckError
 
 
 class CheckService(CheckerBase):
@@ -136,25 +141,47 @@ class CheckService(CheckerBase):
         res = []
         status = 'OK'
         idx = self.nagios_codes.index(status)
-        try:
-            for endpoint, data in self.get_endpoints():
-                ep_status, msg = self._check_endpoint(endpoint, data)
+        # Spawn the downloaders
+        checks = {ep: {'data': data, 'job': gevent.spawn(self._check_endpoint, ep, data)}
+                  for ep, data in self.get_endpoints()}
+        gevent.joinall([v['job'] for v in checks.values()], self.nrpe_timeout - 1)
+
+        for endpoint, v in checks.items():
+            data = v['data']
+            job = v['job']
+            # Endpoint fetching failed or timed out.
+            if not job.successful():
+                status = 'CRITICAL'
+                idx = self.nagios_codes.index(status)
+                if job.exception:
+                    res.append("{ep} - generic error: {exc}".format(ep=endpoint, exc=job.exception))
+                else:
+                    res.append(
+                        '{ep} ({title}) timed out before a response was received'.format(
+                            ep=endpoint, title=data.get('title', 'no title')
+                        )
+                    )
+            else:
+
+                ep_status, msg = job.value
                 if ep_status != 'OK':
-                    res.append("{} ({}) is {}: {}".format(
-                        endpoint, data.get('title', 'no title'),
-                        ep_status, msg))
+                    res.append(
+                        "{ep} ({title}) is {status}: {message}".format(
+                            ep=endpoint, title=data.get('title', 'no title'), status=ep_status,
+                            message=msg
+                        )
+                    )
                     ep_idx = self.nagios_codes.index(ep_status)
                     if ep_idx >= idx:
                         status = ep_status
                         idx = ep_idx
+
+        if status == 'OK':
+            message = "All endpoints are healthy"
+        else:
             message = u"; ".join(res)
-            if status == 'OK':
-                message = "All endpoints are healthy"
-        except Exception as e:
-            message = "Generic error: {}".format(e)
-            status = 'CRITICAL'
         print(message)
-        sys.exit(self.nagios_codes.index(status))
+        sys.exit(idx)
 
     def _check_endpoint(self, endpoint, data):
         """

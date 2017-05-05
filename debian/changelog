@@ -1,3 +1,10 @@
+service-checker (0.1.0) UNRELEASED; urgency=medium
+
+  * Asyncronous url fetching using gevent
+  * Added ability to report timing data to statsd
+
+ -- Giuseppe Lavagetto <glavagetto@wikimedia.org>  Fri, 05 May 2017 13:26:53 +0200
+
 service-checker (0.0.3) jessie-wikimedia; urgency=medium
 
   * Improved message on malformed responses

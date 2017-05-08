@@ -68,10 +68,9 @@ class CheckService(CheckerBase):
         """
         Returns an url pointing to the IP of the host to check.
         """
-        return "{}://{}:{}{}".format(self.base_url.scheme,
-                                     self.host_ip,
-                                     self.port,
-                                     self._url_prefix)
+        return "{}://{}:{}".format(self.base_url.scheme,
+                                   self.host_ip,
+                                   self.port)
 
     def get_endpoints(self):
         """
@@ -82,7 +81,7 @@ class CheckService(CheckerBase):
         # TODO: cache all this.
         response = fetch_url(
             http,
-            self._url + self.spec_url,
+            self._url + self._url_prefix + self.spec_url,
             timeout=self._timeout,
             headers={'Host': self.http_host}
         )
@@ -246,7 +245,8 @@ class EndpointRequest(object):
         """
         try:
             url = self.tpl_url.realize(self.url_parameters)
-            label = url.replace(self.base_url, '', 1).replace('.', '_').replace('/', '_')
+            label = url.replace(self.base_url, '', 1).replace(
+                '.', '_').replace('/', '', 1).replace('/', '_')
             with time_to_statsd(label):
                 r = fetch_url(
                     client,

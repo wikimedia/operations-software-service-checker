@@ -142,12 +142,14 @@ class CheckService(CheckerBase):
         status = 'OK'
         idx = self.nagios_codes.index(status)
         # Spawn the downloaders
-        checks = {ep: {'data': data, 'job': gevent.spawn(self._check_endpoint, ep, data)}
-                  for ep, data in self.get_endpoints()}
-        gevent.joinall([v['job'] for v in checks.values()], self.nrpe_timeout - 1)
+        checks = [{'ep': ep, 'data': data, 'job': gevent.spawn(self._check_endpoint, ep, data)}
+                  for ep, data in self.get_endpoints()]
+        gevent.joinall([v['job'] for v in checks], self.nrpe_timeout - 2)
 
-        for endpoint, v in checks.items():
+        for v in checks:
+            endpoint = v['ep']
             data = v['data']
+            title = data.get('title', "test for {}".format(endpoint))
             job = v['job']
             # Endpoint fetching failed or timed out.
             if not job.successful():
@@ -158,7 +160,7 @@ class CheckService(CheckerBase):
                 else:
                     res.append(
                         '{ep} ({title}) timed out before a response was received'.format(
-                            ep=endpoint, title=data.get('title', 'no title')
+                            ep=endpoint, title=title,
                         )
                     )
             else:
@@ -167,7 +169,7 @@ class CheckService(CheckerBase):
                 if ep_status != 'OK':
                     res.append(
                         "{ep} ({title}) is {status}: {message}".format(
-                            ep=endpoint, title=data.get('title', 'no title'), status=ep_status,
+                            ep=endpoint, title=title, status=ep_status,
                             message=msg
                         )
                     )
@@ -244,7 +246,7 @@ class EndpointRequest(object):
         """
         try:
             url = self.tpl_url.realize(self.url_parameters)
-            label = url.replace(self.base_url, '', 1).replace('/', '_')
+            label = url.replace(self.base_url, '', 1).replace('.', '_').replace('/', '_')
             with time_to_statsd(label):
                 r = fetch_url(
                     client,

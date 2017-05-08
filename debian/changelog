@@ -1,4 +1,4 @@
-service-checker (0.1.0) UNRELEASED; urgency=medium
+service-checker (0.1.0) jessie-wikimedia; urgency=medium
 
   * Asyncronous url fetching using gevent
   * Added ability to report timing data to statsd

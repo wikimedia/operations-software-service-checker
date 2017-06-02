@@ -69,6 +69,10 @@ def fetch_url(client, url, **kw):
         del kw['method']
     else:
         method = 'GET'
+    if 'headers' not in kw:
+        kw['headers'] = {}
+    if 'User-Agent' not in kw['headers']:
+        kw['headers']['User-Agent'] = 'ServiceChecker-WMF/0.1.2'
     try:
         if method == 'GET':
             return client.request(

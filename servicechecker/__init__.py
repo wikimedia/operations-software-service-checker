@@ -73,6 +73,7 @@ def fetch_url(client, url, **kw):
         kw['headers'] = {}
     if 'User-Agent' not in kw['headers']:
         kw['headers']['User-Agent'] = 'ServiceChecker-WMF/0.1.2'
+
     try:
         if method == 'GET':
             return client.request(
@@ -133,4 +134,10 @@ class CheckerBase(object):
         }
         kw['ca_certs'] = "/etc/ssl/certs/ca-certificates.crt"
         kw['cert_reqs'] = 'CERT_REQUIRED'
+        # necessary if we want to specify an IP to connect to *and*
+        # an hostname we want to verify  the TLS cert against.
+        try:
+            kw['assert_hostname'] = self.http_host
+        except:
+            pass
         return urllib3.PoolManager(**kw)

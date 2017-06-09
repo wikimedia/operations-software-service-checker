@@ -124,7 +124,7 @@ class CheckerBase(object):
     nagios_codes = ['OK', 'WARNING', 'CRITICAL']
     nrpe_timeout = 10
 
-    def _spawn_downloader(self):
+    def _spawn_downloader(self, https=False):
         """
         Spawns an urllib3.Poolmanager with the correct configuration.
         """
@@ -136,8 +136,9 @@ class CheckerBase(object):
         kw['cert_reqs'] = 'CERT_REQUIRED'
         # necessary if we want to specify an IP to connect to *and*
         # an hostname we want to verify  the TLS cert against.
-        try:
-            kw['assert_hostname'] = self.http_host
-        except:
-            pass
+        if https:
+            try:
+                kw['assert_hostname'] = self.http_host
+            except:
+                pass
         return urllib3.PoolManager(**kw)

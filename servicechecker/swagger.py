@@ -62,6 +62,7 @@ class CheckService(CheckerBase):
         self.endpoints = {}
         self._timeout = timeout
         self.spec_url = spec_url
+        self.is_https = (self.base_url.scheme == 'https')
 
     @property
     def _url(self):
@@ -77,7 +78,7 @@ class CheckService(CheckerBase):
         Gets the full spec from base_url + '/?spec' and parses it.
         Returns a generator iterating over the available endpoints
         """
-        http = self._spawn_downloader()
+        http = self._spawn_downloader(self.is_https)
         # TODO: cache all this.
         response = fetch_url(
             http,
@@ -199,7 +200,7 @@ class CheckService(CheckerBase):
             req,
             data.get('response')
         )
-        er.run(self._spawn_downloader())
+        er.run(self._spawn_downloader(self.is_https))
         return (er.status, er.msg)
 
 

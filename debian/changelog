@@ -1,3 +1,9 @@
+service-checker (0.1.3) jessie-wikimedia; urgency=medium
+
+  * Fixup for non-https urls
+
+ -- Giuseppe Lavagetto <glavagetto@wikimedia.org>  Fri, 09 Jun 2017 17:34:43 +0200
+
 service-checker (0.1.2) jessie-wikimedia; urgency=low
 
   [ Marko Obrovac ]

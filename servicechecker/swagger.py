@@ -32,7 +32,11 @@ class CheckService(CheckerBase):
     """
     Shell class for checking services
     """
-    default_response = {'status': 200}
+    default_request = {
+        'request': {},
+        'response': {'status': 200},
+        'title': 'Untitled test'
+    }
     _supported_methods = ['get', 'post']
 
     def __init__(self, host_ip, base_url, timeout=5, spec_url='/?spec'):
@@ -114,22 +118,21 @@ class CheckService(CheckerBase):
                     if not d.get('x-monitor', True):
                         continue
                     if key == 'get':
-                        default_example = [{
-                            'request': {},
-                            'response': self.default_response
-                        }]
+                        default_example = [self.default_request.copy()]
                     else:
                         # Only GETs have default examples
                         default_example = []
                     examples = d.get('x-amples', default_example)
                     for x in examples:
-                        x['http_method'] = key
+                        req = {'http_method': key}
+                        req.update(self.default_request)
+                        req.update(x)
                         # Merge query parameters with defaults
                         # In Py 3.5 we could do {**default_query, **query}
                         query = default_query.copy()
-                        query.update(x['request'].get('query', {}))
-                        x['request']['query'] = query
-                        yield endpoint, x
+                        query.update(req['request'].get('query', {}))
+                        req['request']['query'] = query
+                        yield endpoint, req
                 except KeyError:
                     # No data for this method
                     pass
@@ -349,6 +352,28 @@ class EndpointRequest(object):
         elif t == 're':
             return lambda x: re.search(arg, x)
 
+    def _set_warning(self, prefix, data):
+        """
+        Sets self.status and self.msg to WARNING with
+        an appropriate message, based on the args. If
+        the status is set to something other than OK or
+        WARNING, it does not update the state, so as
+        not to potentially overwrite a CRITICAL message.
+
+        Args:
+            prefix (str): the body path being chcked
+
+            data (mixed): the data to use in the message
+        """
+        if self.status not in ['OK', 'WARNING']:
+            return False
+        if self.status == 'OK':
+            self.msg = ''
+        self.status = "WARNING"
+        self.msg += ("Test {} responds with unexpected "
+                     "value at path {} => {}\n".format(self.title, prefix, data))
+        return True
+
     def _check_json_chunk(self, data, model, prefix=''):
         """
         Recursively check a json chunk of the response.
@@ -360,23 +385,53 @@ class EndpointRequest(object):
 
             prefix (str): the depth we're checking at
         """
+        if model is None:
+            # if the model happens to be None, there is nothing
+            # we can say about the validity of the received value
+            return True
+        elif data is None:
+            # assume that means 'empty'
+            if type(model).__name__ in ['dict', 'list', 'int', 'float']:
+                data = type(model)()
+            else:
+                data = ''
         if isinstance(model, dict):
+            if not isinstance(data, dict):
+                self._set_warning(prefix, "Expected dict, "
+                                  "gotten a {}".format(type(data).__name__))
+                return True
+            missing_keys = []
             for k, v in model.items():
+                if k not in data:
+                    missing_keys.append(k)
+                    continue
                 p = prefix + '/' + k
                 d = data.get(k, None)
                 self._check_json_chunk(d, v, prefix=p)
+            if len(missing_keys) > 0:
+                self._set_warning(prefix,
+                                  "Missing keys: {}".format(missing_keys))
         elif isinstance(model, list):
+            if not isinstance(data, list):
+                self._set_warning(prefix, "Expected list, "
+                                  "gotten a {}".format(type(data).__name__))
+                return True
+            elif len(model) == 1 and len(data) > 1:
+                for i in range(len(data)):
+                    p = prefix + '[%d]' % i
+                    self._check_json_chunk(data[i], model[0], prefix=p)
+                return True
+            elif len(data) != len(model):
+                self._set_warning(prefix, "Expected {} array elements, "
+                                  "gotten {}".format(len(model), len(data)))
+                return True
             for i in range(len(model)):
                 p = prefix + '[%d]' % i
                 self._check_json_chunk(data[i], model[i], prefix=p)
         else:
             check = self._verify(model)
             if not check(str(data)):
-                self.status = "WARNING"
-                self.msg = ("Test {} responds with "
-                            "unexpected body: {} => {}".format(
-                                self.title, prefix, data))
-                raise CheckError("{} => {}".format(prefix, data))
+                self._set_warning(prefix, data)
         return True
 
 

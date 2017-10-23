@@ -1,3 +1,9 @@
+service-checker (0.1.4) jessie-wikimedia; urgency=medium
+
+  * Improve the checking procedure and emit better messages
+
+ -- Marko Obrovac <mobrovac@wikimedia.org>  Thu, 26 Oct 2017 13:30:00 +0000
+
 service-checker (0.1.3) jessie-wikimedia; urgency=medium
 
   * Fixup for non-https urls

@@ -156,7 +156,7 @@ class TestEndpointRequest(unittest.TestCase):
         self.ep.run(urllib3.PoolManager())
         self.assertEquals(self.ep.status, 'WARNING')
         self.assertEquals("Test a Test endpoint responds with unexpected "
-                          "body: /items[0]/tid => 12", self.ep.msg)
+                          "value at path /items[0]/tid => 12\n", self.ep.msg)
 
     def test_run_missing_body(self):
         """
@@ -166,8 +166,8 @@ class TestEndpointRequest(unittest.TestCase):
         self.mock_response(self.resp)
         self.ep.run(urllib3.PoolManager())
         self.assertEquals(self.ep.status, 'WARNING')
-        self.assertEquals("Test a Test endpoint responds with unexpected "
-                          "body: /items[0]/tid => None", self.ep.msg)
+        self.assertEquals("Test a Test endpoint responds with unexpected value "
+                          "at path /items[0] => Missing keys: ['tid']\n", self.ep.msg)
 
     def test_default_response(self):
         """

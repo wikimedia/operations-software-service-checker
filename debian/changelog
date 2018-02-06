@@ -1,3 +1,9 @@
+service-checker (0.1.4-1) unstable; urgency=medium
+
+  * Conversion to a non-native Debian package
+
+ -- Alexandros Kosiaris <alex@wikimedia.org>  Tue, 06 Feb 2018 15:07:36 +0200
+
 service-checker (0.1.4) jessie-wikimedia; urgency=medium
 
   * Improve the checking procedure and emit better messages

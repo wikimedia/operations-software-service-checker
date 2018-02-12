@@ -1,3 +1,9 @@
+service-checker (0.1.4-2~jessie1) jessie-wikimedia; urgency=medium
+
+  * Rebuild for jessie-wikimedia
+
+ -- Alexandros Kosiaris <akosiaris@wikimedia.org>  Mon, 12 Feb 2018 12:46:14 +0200
+
 service-checker (0.1.4-2) unstable; urgency=medium
 
   * Adding runtime dependency to pkg_resources which is used by the cli script

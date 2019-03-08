@@ -40,7 +40,7 @@ def time_to_statsd(label):
             statsd_label = "{prefix}.{label}".format(prefix=statsd_prefix, label=label)
             gevent.spawn(statsd_client.timing, statsd_label, delta.total_seconds() * 1000)
         except:
-            # Statsd reporting is a secundary function of this code: if it fails, we're ok
+            # Statsd reporting is a secondary function of this code: if it fails, we're ok
             # with it and it should not interfere with completing the checks.
             pass
 

@@ -26,7 +26,7 @@ try:
 except:
     pass
 
-from servicechecker import CheckerBase, fetch_url, CheckError
+from servicechecker import CheckerBase, fetch_url, CheckError, logging
 from servicechecker.metrics import Null as NullMetrics
 from servicechecker.metrics import StatsD as StatsDMetrics
 
@@ -121,6 +121,7 @@ class CheckService(CheckerBase):
                     d = data[key]
                     # If x-monitor is False, skip this
                     if not d.get('x-monitor', True):
+                        logging.debug('x-monitor is False, skipping %s %s' % (key, endpoint))
                         continue
                     if key == 'get':
                         default_example = [self.default_request.copy()]
@@ -152,6 +153,8 @@ class CheckService(CheckerBase):
         # Spawn the downloaders
         checks = [{'ep': ep, 'data': data, 'job': gevent.spawn(self._check_endpoint, ep, data)}
                   for ep, data in self.get_endpoints()]
+        # The -2 is for terminating the connections before the nrpe timeout
+        # kicks in
         gevent.joinall([v['job'] for v in checks], self.nrpe_timeout - 2)
 
         for v in checks:
@@ -174,6 +177,7 @@ class CheckService(CheckerBase):
             else:
 
                 ep_status, msg = job.value
+                # WARNING or UNKNOWN
                 if ep_status != 'OK':
                     res.append(
                         "{ep} ({title}) is {status}: {message}".format(
@@ -459,6 +463,7 @@ class TemplateUrl(object):
         Args:
             url_string (str): The url template
         """
+        logging.info('Using TemplateUrl, which violates swagger/openapi specification')
         Token = namedtuple('Token', ['key', 'types', 'original'])
         self._url_string = url_string
         self.tokens = []

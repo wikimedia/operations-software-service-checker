@@ -5,6 +5,8 @@ import gevent
 import statsd
 import urllib3
 
+from servicechecker import logging
+
 
 class Metrics:
     """ Metrics base class """
@@ -54,8 +56,9 @@ class StatsD(Metrics):
                 gevent.spawn(self.client.timing, tags, delta.total_seconds() * 1000)
             except Exception:
                 # Statsd reporting is a secondary function of this code: if it fails, we're ok
-                # with it and it should not interfere with completing the checks.
-                pass
+                # with it and it should not interfere with completing the checks,
+                # but do log it
+                logging.error('Sending to statsd failed')
 
     def _get_tags_for(self, url):
         url = urllib3.util.parse_url(url)

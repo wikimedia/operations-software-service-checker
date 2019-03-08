@@ -4,6 +4,16 @@ from gevent import monkey; monkey.patch_all()  # noqa
 
 import json
 import urllib3
+import logging
+import os
+
+try:
+    log_conf = os.environ.get('LOG_LEVEL')
+    # Make an assumption here the caller knows what they are doing
+    log_level = getattr(logging, log_conf)
+except:
+    log_level = logging.WARNING  # The default anyway
+logging.basicConfig(level=log_level)
 
 
 class CheckError(Exception):
@@ -37,6 +47,7 @@ def fetch_url(client, url, **kw):
 
     try:
         if method == 'GET':
+            logging.debug('GET %s' % url)
             return client.request(
                 method,
                 url,
@@ -73,6 +84,7 @@ def fetch_url(client, url, **kw):
                     **kw
                 )
 
+            logging.debug('POST %s' % url)
             return client.request_encode_body(
                 method,
                 url,
@@ -115,5 +127,6 @@ class CheckerBase(object):
             try:
                 kw['assert_hostname'] = self.http_host
             except:
+                logging.warn('assert_hostname not set')
                 pass
         return urllib3.PoolManager(**kw)

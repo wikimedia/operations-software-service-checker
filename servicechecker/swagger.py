@@ -106,7 +106,8 @@ class CheckService(CheckerBase):
         TemplateUrl.default = r.get('x-default-params', {})
         # default query parameters for requests
         default_query = r.get('x-default-query', {})
-        base_path = r.get('basePath', '')
+        servers = r.get('servers', [])
+        base_path = servers[0].get('url', '') if servers and servers[0] else r.get('basePath', '')
         for endpoint, data in r['paths'].items():
             if not endpoint:
                 continue

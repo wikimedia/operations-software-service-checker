@@ -97,6 +97,20 @@ def fetch_url(client, url, **kw):
                     url,
                     **kw
                 )
+            # Handle raw binary requests
+            if content_type.lower() == 'application/octet-stream':
+                body = kw['fields']
+                del kw['fields']
+                if isinstance(body, dict) or isinstance(body, list):
+                    # assume JSON encoding for structures
+                    kw['body'] = json.dumps(body)
+                else:
+                    kw['body'] = body
+                return client.urlopen(
+                    method,
+                    url,
+                    **kw
+                )
 
             return client.request_encode_body(
                 method,

@@ -1,3 +1,10 @@
+service-checker (0.1.5) jessie-wikimedia; urgency=medium
+
+  * Support OpenAPI v3 specifications
+  * Make raw octet-stream requests properly
+
+ -- Marko Obrovac <mobrovac@wikimedia.org>  Wed, 1 May 2019 02:30:00 +0000
+
 service-checker (0.1.4-2) unstable; urgency=medium
 
   * Adding runtime dependency to pkg_resources which is used by the cli script

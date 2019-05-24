@@ -40,7 +40,7 @@ def time_to_statsd(label):
             statsd_label = "{prefix}.{label}".format(prefix=statsd_prefix, label=label)
             gevent.spawn(statsd_client.timing, statsd_label, delta.total_seconds() * 1000)
         except:
-            # Statsd reporting is a secundary function of this code: if it fails, we're ok
+            # Statsd reporting is a secondary function of this code: if it fails, we're ok
             # with it and it should not interfere with completing the checks.
             pass
 
@@ -92,6 +92,20 @@ def fetch_url(client, url, **kw):
             if content_type.lower() == 'application/json':
                 kw['body'] = json.dumps(kw['fields'])
                 del kw['fields']
+                return client.urlopen(
+                    method,
+                    url,
+                    **kw
+                )
+            # Handle raw binary requests
+            if content_type.lower() == 'application/octet-stream':
+                body = kw['fields']
+                del kw['fields']
+                if isinstance(body, dict) or isinstance(body, list):
+                    # assume JSON encoding for structures
+                    kw['body'] = json.dumps(body)
+                else:
+                    kw['body'] = body
                 return client.urlopen(
                     method,
                     url,

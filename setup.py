@@ -4,7 +4,7 @@ import os
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 
-version = '0.1.4'
+version = '0.1.5'
 
 install_requires = [
     'urllib3>=1.7',

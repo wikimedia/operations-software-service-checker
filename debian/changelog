@@ -1,3 +1,9 @@
+service-checker (0.1.5-1~jessie1) jessie-wikimedia; urgency=medium
+
+  * Rebuild for jessie-wikimedia
+
+ -- Giuseppe Lavagetto <glavagetto@wikimedia.org>  Fri, 24 May 2019 16:17:39 +0200
+
 service-checker (0.1.5-1) jessie-wikimedia; urgency=medium
 
   * Support OpenAPI v3 specifications

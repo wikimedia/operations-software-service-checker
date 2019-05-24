@@ -6,16 +6,58 @@
     "/not_monitored": {"get": {"x-monitor": false}},
     "/{who}/{verb}": {"get": {
       "x-amples": [{
-                        "request": {
-                            "params": {
-                                "verb": "rulez"
-                            }
-                        },
-                        "response": {
-                            "body": "\"For sure!\"",
-                            "status": 200
-                        },
-                        "title": "General affirmation"
+        "request": {
+          "params": {
+            "verb": "rulez"
+          }
+        },
+        "response": {
+          "body": "\"For sure!\"",
+          "status": 200
+        },
+        "title": "General affirmation"
+      }]
+    }},
+    "/important": {"post": {
+      "x-amples": [{
+        "title": "Is there life on Mars",
+        "request": {
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "water": true,
+            "air": "light"
+          }
+        },
+        "response": {
+          "status": 201
+        }
+      }, {
+        "title": "Another brick in the wall",
+        "request": {
+          "headers": {
+            "Content-Type": "application/octet-stream"
+          },
+          "body": {
+            "education": "I dont need no",
+            "album": {"type": "family", "empty": true}
+          }
+        },
+        "response": {
+          "status": 201
+        }
+      }, {
+        "title": "Sittin on the dock of the bay",
+        "request": {
+          "headers": {
+            "Content-Type": "application/octet-stream"
+          },
+          "body": "watchin the tide roll away"
+        },
+        "response": {
+          "status": 201
+        }
       }]
     }}
   }

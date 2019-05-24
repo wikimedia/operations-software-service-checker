@@ -234,7 +234,8 @@ class TestCheckService(unittest.TestCase):
         self.mock_routes()
         l = [el for el, data in self.cs.get_endpoints()]
         l.sort()
-        self.assertListEqual(l, [u'/api/simple', u'/api/{who}/{verb}'])
+        self.assertListEqual(l, [u'/api/important', u'/api/important', u'/api/important',
+                                 u'/api/simple', u'/api/{who}/{verb}'])
 
     def test_get_ep_invalid_spec(self):
         """
@@ -256,6 +257,7 @@ class TestCheckService(unittest.TestCase):
         self.add_mock_response('/api/simple', {'status': 200, 'body': 'hi'})
         self.add_mock_response(
             '/api/joe/rulez', {'status': 200, 'body': 'For sure!'})
+        self.add_mock_response('/api/important', {'status': 201, 'body': ''})
         self.mock_routes()
         with self.assertRaises(SystemExit) as e:
             self.cs.run()
@@ -267,6 +269,7 @@ class TestCheckService(unittest.TestCase):
         """
         self.add_mock_response('/simple', {'status': 200, 'body': 'hi'})
         self.add_mock_response('/joe/rulez', {'status': 301, 'body': ''})
+        self.add_mock_response('/api/important', {'status': 302, 'body': ''})
         self.mock_routes()
         with self.assertRaises(SystemExit) as e:
             self.cs.run()
@@ -279,6 +282,7 @@ class TestCheckService(unittest.TestCase):
         self.add_mock_response('/api/simple', {'status': 200, 'body': 'hi'})
         self.add_mock_response(
             '/api/joe/rulez', {'status': 200, 'body': 'For sure?'})
+        self.add_mock_response('/api/important', {'status': 201, 'body': 'ok'})
         self.mock_routes()
         with self.assertRaises(SystemExit) as e:
             self.cs.run()

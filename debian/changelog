@@ -1,3 +1,9 @@
+service-checker (0.1.5-1~jessie2) UNRELEASED; urgency=medium
+
+  * Fix the dependency on gevent now that pybuild properly builds the metadata.
+
+ -- Giuseppe Lavagetto <glavagetto@wikimedia.org>  Wed, 29 May 2019 11:37:43 +0200
+
 service-checker (0.1.5-1~jessie1) jessie-wikimedia; urgency=medium
 
   * Rebuild for jessie-wikimedia

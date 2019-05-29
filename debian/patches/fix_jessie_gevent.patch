@@ -1,0 +1,13 @@
+diff --git a/setup.py b/setup.py
+index 35876ff..51c9115 100644
+--- a/setup.py
++++ b/setup.py
+@@ -9,7 +9,7 @@ version = '0.1.5'
+ install_requires = [
+     'urllib3>=1.7',
+     'PyYAML>=3.11',
+-    'gevent>=1.1',
++    'gevent>=1.1b6',
+     'statsd>=3.0',
+ ]
+ 

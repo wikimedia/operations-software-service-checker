@@ -108,6 +108,7 @@ class CheckService(CheckerBase):
         default_query = r.get('x-default-query', {})
         servers = r.get('servers', [])
         base_path = servers[0].get('url', '') if servers and servers[0] else r.get('basePath', '')
+        base_path = base_path.rstrip('/')
         for endpoint, data in r['paths'].items():
             if not endpoint:
                 continue

@@ -1,6 +1,7 @@
 service-checker (0.1.5-2) UNRELEASED; urgency=medium
 
   * Copy tests fixtures when building the package
+  * extend dpkg-source diff-ignore
 
  -- Antoine Musso <hashar@free.fr>  Mon, 15 Jul 2019 12:04:44 +0200
 

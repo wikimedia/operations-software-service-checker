@@ -1,3 +1,9 @@
+service-checker (0.1.5-2) UNRELEASED; urgency=medium
+
+  * Copy tests fixtures when building the package
+
+ -- Antoine Musso <hashar@free.fr>  Mon, 15 Jul 2019 12:04:44 +0200
+
 service-checker (0.1.5-1) jessie-wikimedia; urgency=medium
 
   * Support OpenAPI v3 specifications

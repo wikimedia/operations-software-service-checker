@@ -3,46 +3,7 @@
 from gevent import monkey; monkey.patch_all()  # noqa
 
 import json
-import os
-
-from contextlib import contextmanager
-from datetime import datetime
-
-import gevent
-import statsd
 import urllib3
-
-statsd_client = None
-# The following environment variables must ALL be set in order for
-# statsd to work at all.
-try:
-    statsd_host = os.environ.get('STATSD_HOST')
-    statsd_port = int(os.environ.get('STATSD_PORT'))
-    statsd_prefix = os.environ.get('STATSD_PREFIX')
-    statsd_client = statsd.StatsClient(statsd_host, statsd_port)
-except:
-    statsd_client = None
-
-
-@contextmanager
-def time_to_statsd(label):
-    """
-    Utility wrapper for statsd reporting.
-
-    Allows to perform actions in a context, time the wall
-    clock execution time, and report that value to statsd in milliseconds.
-    """
-    start = datetime.utcnow()
-    yield
-    delta = datetime.utcnow() - start
-    if statsd_client is not None:
-        try:
-            statsd_label = "{prefix}.{label}".format(prefix=statsd_prefix, label=label)
-            gevent.spawn(statsd_client.timing, statsd_label, delta.total_seconds() * 1000)
-        except:
-            # Statsd reporting is a secondary function of this code: if it fails, we're ok
-            # with it and it should not interfere with completing the checks.
-            pass
 
 
 class CheckError(Exception):

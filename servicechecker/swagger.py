@@ -8,6 +8,7 @@ import json
 import yaml
 import re
 import sys
+import os
 
 import gevent
 
@@ -25,7 +26,9 @@ try:
 except:
     pass
 
-from servicechecker import CheckerBase, fetch_url, CheckError, time_to_statsd
+from servicechecker import CheckerBase, fetch_url, CheckError
+from servicechecker.metrics import Null as NullMetrics
+from servicechecker.metrics import StatsD as StatsDMetrics
 
 
 class CheckService(CheckerBase):
@@ -214,6 +217,7 @@ class EndpointRequest(object):
     """
     Manages a request to a specific endpoint
     """
+    metrics_manager = NullMetrics()
 
     def __init__(self, title, base_url, http_method,
                  endpoint,  request, response):
@@ -251,9 +255,7 @@ class EndpointRequest(object):
         """
         try:
             url = self.tpl_url.realize(self.url_parameters)
-            label = url.replace(self.base_url, '', 1).replace(
-                '.', '_').replace('/', '', 1).replace('/', '_')
-            with time_to_statsd(label):
+            with self.metrics_manager.record(url):
                 r = fetch_url(
                     client,
                     url,
@@ -512,6 +514,11 @@ def main():
                         help="Specific spec url relative to the base one."
                         " Defaults to /?spec.")
     args = parser.parse_args()
+    EndpointRequest.metrics_manager = StatsDMetrics(
+        host=os.environ.get('STATSD_HOST', default=None),
+        port=os.environ.get('STATSD_PORT', default=None),
+        prefix=os.environ.get('STATSD_PREFIX', default=None)
+    )
     checker = CheckService(args.host_ip, args.service_url,
                            args.timeout, args.spec_url)
     checker.run()

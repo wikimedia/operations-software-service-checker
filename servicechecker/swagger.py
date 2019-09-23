@@ -42,7 +42,8 @@ class CheckService(CheckerBase):
     }
     _supported_methods = ['get', 'post']
 
-    def __init__(self, host_ip, base_url, timeout=5, spec_url='/?spec'):
+    def __init__(self, host_ip, base_url, timeout=5, spec_url='/?spec',
+                 metrics_manager=None):
         """
         Initialize the checker
 
@@ -55,6 +56,7 @@ class CheckService(CheckerBase):
 
             spec_url (str): the string to append to the base url, defaults to
                            /?spec
+           metrics_manager (Metrics): Instance of Metrics implementation or None. default: None
         """
         self.host_ip = host_ip
         self.base_url = urlparse.urlsplit(base_url)
@@ -70,6 +72,10 @@ class CheckService(CheckerBase):
         self._timeout = timeout
         self.spec_url = spec_url
         self.is_https = (self.base_url.scheme == 'https')
+        if metrics_manager is None:
+            self.metrics_manager = NullMetrics()
+        else:
+            self.metrics_manager = metrics_manager
 
     @property
     def _url(self):
@@ -210,7 +216,8 @@ class CheckService(CheckerBase):
             data['http_method'],
             endpoint,
             req,
-            data.get('response')
+            data.get('response'),
+            self.metrics_manager
         )
         er.run(self._spawn_downloader(self.is_https))
         return (er.status, er.msg)
@@ -221,10 +228,9 @@ class EndpointRequest(object):
     """
     Manages a request to a specific endpoint
     """
-    metrics_manager = NullMetrics()
 
     def __init__(self, title, base_url, http_method,
-                 endpoint,  request, response):
+                 endpoint,  request, response, metrics_manager=None):
         """
         Initialize the endpoint request
 
@@ -240,6 +246,8 @@ class EndpointRequest(object):
             request (dict): All data for building the request
 
             response (dict): What we should test in the response
+
+            metrics_manager (Metrics): Instance of Metrics implementation or None. default: None
         """
         self.status = 'OK'
         self.msg = 'Test "{}" healthy'.format(title)
@@ -249,6 +257,10 @@ class EndpointRequest(object):
         self._response(response)
         self.tpl_url = TemplateUrl(base_url + endpoint)
         self.base_url = base_url
+        if metrics_manager is None:
+            self.metrics_manager = NullMetrics()
+        else:
+            self.metrics_manager = metrics_manager
 
     def run(self, client):
         """
@@ -519,13 +531,13 @@ def main():
                         help="Specific spec url relative to the base one."
                         " Defaults to /?spec.")
     args = parser.parse_args()
-    EndpointRequest.metrics_manager = StatsDMetrics(
+    metrics_manager = StatsDMetrics(
         host=os.environ.get('STATSD_HOST', default=None),
         port=os.environ.get('STATSD_PORT', default=None),
         prefix=os.environ.get('STATSD_PREFIX', default=None)
     )
     checker = CheckService(args.host_ip, args.service_url,
-                           args.timeout, args.spec_url)
+                           args.timeout, args.spec_url, metrics_manager)
     checker.run()
 
 

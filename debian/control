@@ -2,27 +2,12 @@ Source: service-checker
 Section: python
 Priority: optional
 Maintainer: Giuseppe Lavagetto <glavagetto@wikimedia.org>
-Build-Depends: debhelper (>=9), dh-python, python-all (>= 2.6.6-3~),
-               python-setuptools, python3-all, python3-setuptools,
-               python-urllib3, python3-urllib3, python-mock, python3-mock,
-               python3-nose, python-nose, python-yaml, python3-yaml,
-               python-gevent (>= 1.1), python3-gevent (>= 1.1), python-statsd,
-               python3-statsd
+Build-Depends: debhelper (>=9), dh-python,  python3-all, python3-setuptools,
+               python3-urllib3, python3-mock, python3-nose, python3-yaml,
+               python3-gevent (>= 1.1), python3-statsd
 Standards-Version: 3.9.8
 Homepage: https://github.com/wikimedia/operations-software-service-checker
-X-Python-Version: >= 2.7
 X-Python3-Version: >= 3.2
-
-Package: python-service-checker
-Architecture: all
-Depends: ${python:Depends}, ${misc:Depends}, python-pkg-resources
-Description: Generic swagger-based webservice checker (Python 2)
- Service-checker can perform http(s) requests based on the 'x-amples'
- sections of the paths part of the spec, and match responses to what
- the expected response is. It is able to check both headers and the
- body of the response and its exit codes are compatible with nagios.
- .
- This package installs the library for Python 2.
 
 Package: python3-service-checker
 Architecture: all
@@ -32,5 +17,3 @@ Description: Generic swagger-based webservice checker (Python 3)
  sections of the paths part of the spec, and match responses to what
  the expected response is. It is able to check both headers and the
  body of the response and its exit codes are compatible with nagios.
- .
- This package installs the library for Python 3.

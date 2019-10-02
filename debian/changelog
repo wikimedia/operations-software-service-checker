@@ -4,6 +4,7 @@ service-checker (0.2.0-1) stretch-wikimedia; urgency=medium
   * Add generic interface to metrics gathering
   * Extend dpkg-source diff ignore
   * Copy fixtures while building the package
+  * Only build for python3
 
  -- Giuseppe Lavagetto <glavagetto@wikimedia.org>  Wed, 18 Sep 2019 12:17:45 +0200
 

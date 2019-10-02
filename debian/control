@@ -12,6 +12,7 @@ X-Python3-Version: >= 3.2
 Package: python3-service-checker
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends}, python3-pkg-resources
+Conflicts: python-service-checker
 Description: Generic swagger-based webservice checker (Python 3)
  Service-checker can perform http(s) requests based on the 'x-amples'
  sections of the paths part of the spec, and match responses to what

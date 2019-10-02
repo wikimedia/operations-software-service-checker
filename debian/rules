@@ -4,7 +4,9 @@ include /usr/share/dpkg/default.mk
 
 export DH_VERBOSE = 1
 
-#export PYBUILD_NAME=service-checker
+# Temporarily disable tests given dh_python in stretch 
+# doesn't seem to support using pybuild.testfiles 
+export PYBUILD_DISABLE=test
 
 %:
 	dh $@  --with python3 --buildsystem=pybuild

@@ -116,7 +116,7 @@ class CheckerBase(object):
         Spawns an urllib3.Poolmanager with the correct configuration.
         """
         kw = {
-            # 'retries': 1, uncomment this once we've got rid of trusty
+            'retries': 1,
             'timeout': self._timeout
         }
         kw['ca_certs'] = "/etc/ssl/certs/ca-certificates.crt"

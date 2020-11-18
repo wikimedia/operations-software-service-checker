@@ -43,7 +43,7 @@ class CheckService(CheckerBase):
     _supported_methods = ['get', 'post']
 
     def __init__(self, host_ip, base_url, timeout=5, spec_url='/?spec',
-                 metrics_manager=None):
+                 metrics_manager=None, insecure=False):
         """
         Initialize the checker
 
@@ -72,6 +72,7 @@ class CheckService(CheckerBase):
         self._timeout = timeout
         self.spec_url = spec_url
         self.is_https = (self.base_url.scheme == 'https')
+        self.insecure = insecure
         if metrics_manager is None:
             self.metrics_manager = NullMetrics()
         else:
@@ -91,7 +92,7 @@ class CheckService(CheckerBase):
         Gets the full spec from base_url + '/?spec' and parses it.
         Returns a generator iterating over the available endpoints
         """
-        http = self._spawn_downloader(self.is_https)
+        http = self._spawn_downloader(self.is_https, self.insecure)
         # TODO: cache all this.
         response = fetch_url(
             http,
@@ -219,7 +220,7 @@ class CheckService(CheckerBase):
             data.get('response'),
             self.metrics_manager
         )
-        er.run(self._spawn_downloader(self.is_https))
+        er.run(self._spawn_downloader(self.is_https, self.insecure))
         return (er.status, er.msg)
 
 
@@ -530,6 +531,11 @@ def main():
     parser.add_argument('-s', dest="spec_url", default="/?spec",
                         help="Specific spec url relative to the base one."
                         " Defaults to /?spec.")
+    parser.add_argument('-k', dest="insecure",
+                        action='store_true',
+                        default=False,
+                        help="Allow insecure server connections when using SSL."
+                        " Defaults to False.")
     args = parser.parse_args()
     metrics_manager = StatsDMetrics(
         host=os.environ.get('STATSD_HOST', default=None),
@@ -537,7 +543,8 @@ def main():
         prefix=os.environ.get('STATSD_PREFIX', default=None)
     )
     checker = CheckService(args.host_ip, args.service_url,
-                           args.timeout, args.spec_url, metrics_manager)
+                           args.timeout, args.spec_url, metrics_manager,
+                           args.insecure)
     checker.run()
 
 

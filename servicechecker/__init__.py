@@ -111,7 +111,7 @@ class CheckerBase(object):
     nagios_codes = ['OK', 'WARNING', 'CRITICAL']
     nrpe_timeout = 10
 
-    def _spawn_downloader(self, https=False):
+    def _spawn_downloader(self, https=False, insecure=False):
         """
         Spawns an urllib3.Poolmanager with the correct configuration.
         """
@@ -121,6 +121,11 @@ class CheckerBase(object):
         }
         kw['ca_certs'] = "/etc/ssl/certs/ca-certificates.crt"
         kw['cert_reqs'] = 'CERT_REQUIRED'
+        if insecure:
+            # We 've been asked to not verify certificates, also suppress the
+            # warning
+            urllib3.disable_warnings()
+            kw['cert_reqs'] = 'CERT_NONE'
         # necessary if we want to specify an IP to connect to *and*
         # an hostname we want to verify  the TLS cert against.
         if https:

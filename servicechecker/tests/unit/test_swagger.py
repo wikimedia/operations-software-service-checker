@@ -226,6 +226,7 @@ class TestCheckService(unittest.TestCase):
         self.assertEquals(self.cs.port, '80')
         self.assertEquals(self.cs.http_host, 'example.org')
         self.assertEquals(self.cs._url, 'http://127.0.0.1:80')
+        self.assertEquals(self.cs.insecure, False)
 
     def test_get_endpoints(self):
         """

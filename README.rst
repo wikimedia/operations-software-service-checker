@@ -35,6 +35,16 @@ as designed according to its spec you can just do
     $ service-checker-swagger 127.0.0.1 awesomeservice.local:8080 -s /swagger
     All endpoints are healthy
 
+service-checker-swagger supports HTTPS urls just fine, but in some cases, you
+might want to avoid certificate verification. While this is something you
+should not do unless you understand very very well the reasons for it, it is
+supported via the --insecure (-k shorthand)
+
+.. code:: bash
+
+    $ service-checker-swagger -k 127.0.0.1 https://awesomeservice.local:8080 -s /swagger
+    All endpoints are healthy
+
 
 Spec format support
 -------------------

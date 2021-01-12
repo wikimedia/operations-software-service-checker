@@ -1,3 +1,13 @@
+service-checker (0.2.1-1) stretch-wikimedia; urgency=medium
+
+  * Allow skipping cert verification
+  * Drop trusty support
+  * Drop python2, python 3.4 support
+  * Add python3.7 (which is in Debian Buster) support
+  * Fix various debianization issues
+
+ -- Alexandros Kosiaris <akosiaris@wikimedia.org>  Tue, 12 Jan 2021 15:23:38 +0200
+
 service-checker (0.2.0-1) stretch-wikimedia; urgency=medium
 
   * Add logging

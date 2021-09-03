@@ -112,8 +112,16 @@ class CheckService(CheckerBase):
             except yaml.YAMLError:
                 raise ValueError("No valid spec found")
 
-        # default params for URL interpolation
-        TemplateUrl.default = r.get('x-default-params', {})
+        # Interestingly, a simple string is a valid yaml document. So if we end
+        # up getting e.g. an HTML document, the loader will not croak and will
+        # just return a str object and get below will fail. Wrap it in a
+        # try/except and handle that
+        try:
+            # default params for URL interpolation
+            TemplateUrl.default = r.get('x-default-params', {})
+        except AttributeError as e:
+            raise ValueError("No valid spec found")
+
         # default query parameters for requests
         default_query = r.get('x-default-query', {})
         servers = r.get('servers', [])
